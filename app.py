@@ -14,21 +14,20 @@ def home():
     global button_states
     if request.method == 'POST':
         btn = request.form.get('button')
-        # Liczba aktualnie włączonych przycisków
-        active = sum(button_states.values())
         # Jeśli kliknięty przycisk jest już włączony, wyłącz go
         if button_states[btn]:
             button_states[btn] = False
-        # Jeśli kliknięty przycisk jest wyłączony i włączone są mniej niż dwa, włącz go
-        elif active < 2:
+        else:
+            # Wyłącz wszystkie, włącz tylko kliknięty
+            for k in button_states:
+                button_states[k] = False
             button_states[btn] = True
-        # W przeciwnym razie nic nie rób (nie można włączyć trzeciego)
         return redirect(url_for('home'))
-    # Kolory i etykiety przycisków
+    # Kolory i etykiety przycisków (wszystkie niebieskie)
     buttons = [
-        {'name': 'dobrze', 'label': 'DOBRZE', 'color': 'red'},
-        {'name': 'tanio', 'label': 'TANIO', 'color': 'green'},
-        {'name': 'szybko', 'label': 'SZYBKO', 'color': 'gray'}
+        {'name': 'dobrze', 'label': 'DOBRZE', 'color': 'blue'},
+        {'name': 'tanio', 'label': 'TANIO', 'color': 'blue'},
+        {'name': 'szybko', 'label': 'SZYBKO', 'color': 'blue'}
     ]
     # Renderowanie strony
     return render_template_string('''
@@ -41,13 +40,10 @@ def home():
                 border: none; border-radius: 8px; color: white; cursor: pointer;
             }
             .active { box-shadow: 0 0 10px 2px #333; }
-            .red { background: #c0392b; }
-            .green { background: #27ae60; }
-            .gray { background: #7f8c8d; }
+            .blue { background: #2980b9; }
         </style>
     </head>
     <body>
-        <h2>Możesz wybrać tylko DWIE opcje:</h2>
         <form method="post">
             {% for btn in buttons %}
                 <button name="button" value="{{btn.name}}"
