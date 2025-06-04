@@ -36,31 +36,3 @@ resource "azurerm_linux_web_app" "example" {
   service_plan_id     = azurerm_service_plan.example.id
   site_config {}
 }
-
-resource "azurerm_mssql_server" "example" {
-  name                         = "piotrw-webapp-t2s-workshop-db"
-  resource_group_name          = "rg-PiotrW"
-  location                     = "westeurope"
-  version                      = "12.0"
-  administrator_login          = "4dm1n157r470r"
-  administrator_login_password = "4-v3ry-53cr37-p455w0rd"
-}
-
-resource "azurerm_mssql_database" "example" {
-  name         = "piotrw-db"
-  server_id    = azurerm_mssql_server.example.id
-  collation    = "Polish_CI_AS" 
-  license_type = "LicenseIncluded"
-  max_size_gb  = 2
-  sku_name     = "S0"
-  enclave_type = "VBS"
-
-  tags = {
-    foo = "bar"
-  }
-
-  # prevent the possibility of accidental data loss
-  lifecycle {
-    prevent_destroy = true
-  }
-}
