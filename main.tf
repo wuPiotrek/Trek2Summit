@@ -48,7 +48,7 @@ resource "azurerm_mssql_server" "example" {
 
 resource "azurerm_mssql_database" "example" {
   name         = "piotrw-db"
-  server_id    = piotrw_azurerm_mssql_server.example.id
+  server_id    = azurerm_mssql_server.example.id
   collation    = "Polish_CI_AS" 
   license_type = "LicenseIncluded"
   max_size_gb  = 2
