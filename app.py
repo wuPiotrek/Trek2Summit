@@ -2,26 +2,36 @@ from flask import Flask, render_template_string, request, redirect, url_for
 
 app = Flask(__name__)
 
-# Stan przycisksów (początkowo wszystkie wyłączone)
+# Stan przycisków (początkowo wszystkie wyłączone)
 button_states = {
     'dobrze': False,
     'tanio': False,
     'szybko': False
 }
+# Kolejność aktywacji przycisków
+active_order = []
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
-    global button_states
+    global button_states, active_order
     if request.method == 'POST':
         btn = request.form.get('button')
-        # Jeśli kliknięty przycisk jest już włączony, wyłącz go
         if button_states[btn]:
+            # Odkliknięcie przycisku
             button_states[btn] = False
+            if btn in active_order:
+                active_order.remove(btn)
         else:
-            # Wyłącz wszystkie, włącz tylko kliknięty
-            for k in button_states:
-                button_states[k] = False
-            button_states[btn] = True
+            # Kliknięcie nowego przycisku
+            if sum(button_states.values()) < 2:
+                button_states[btn] = True
+                active_order.append(btn)
+            else:
+                # Odkliknij najstarszy, kliknij nowy
+                oldest = active_order.pop(0)
+                button_states[oldest] = False
+                button_states[btn] = True
+                active_order.append(btn)
         return redirect(url_for('home'))
     # Kolory i etykiety przycisków (wszystkie niebieskie)
     buttons = [
